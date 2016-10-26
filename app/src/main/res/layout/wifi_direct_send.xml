@@ -21,19 +21,6 @@
         android:layout_alignBottom="@+id/btnRefresh"
         android:layout_centerHorizontal="true" />
 
-    <Button
-        android:text="Refresh"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:id="@+id/btnRefresh"
-
-        android:layout_marginRight="43dp"
-        android:layout_marginEnd="43dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="wrap_content"
@@ -41,6 +28,32 @@
         android:layout_below="@+id/btnRefresh"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="120dp" />
+        android:layout_marginTop="120dp"
+        android:layout_toStartOf="@+id/btnSend"
+        android:layout_toLeftOf="@+id/btnSend" />
+
+    <Button
+        android:text="Request"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:id="@+id/btnRequest"
+
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="12dp" />
+
+    <Button
+        android:text="Refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:id="@+id/btnRefresh"
+
+        android:layout_marginTop="28dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

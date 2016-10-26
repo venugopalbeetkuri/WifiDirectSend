@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.wifi.WifiManager;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -35,6 +36,7 @@ import wifi.bizzmark.com.wifidirectsend.Service.DataTransferService;
 public class WifiDirectSend extends AppCompatActivity {
 
     private Button btRefresh;
+    private Button btnRequest;
     private EditText editText;
 
     private RecyclerView mRecyclerView;
@@ -46,6 +48,7 @@ public class WifiDirectSend extends AppCompatActivity {
     private WifiP2pManager.Channel mChannel;
     private BroadcastReceiver mReceiver;
     private IntentFilter mFilter;
+
     // Connection info object.
     private WifiP2pInfo info;
 
@@ -74,6 +77,7 @@ public class WifiDirectSend extends AppCompatActivity {
     private void initView() {
 
         btRefresh = (Button) findViewById(R.id.btnRefresh);
+        btnRequest = (Button) findViewById(R.id.btnRequest);
         editText = (EditText) findViewById(R.id.txtSend);
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
@@ -83,7 +87,7 @@ public class WifiDirectSend extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
 
-        // btRefresh.setVisibility(View.INVISIBLE);
+        btnRequest.setVisibility(View.INVISIBLE);
 
     }
 
@@ -109,7 +113,7 @@ public class WifiDirectSend extends AppCompatActivity {
             @Override
             public void onPeersAvailable(WifiP2pDeviceList peersList) {
 
-                Toast.makeText(getApplicationContext(),"WifiP2pManager.PeerListListener onPeersAvailable.",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(),"WifiP2pManager.PeerListListener onPeersAvailable.",Toast.LENGTH_SHORT).show();
                 peers.clear();
                 peersshow.clear();
 
@@ -155,6 +159,7 @@ public class WifiDirectSend extends AppCompatActivity {
                 // Toast.makeText(getApplicationContext(),"ConnectionInfoListener onConnectionInfoAvailable.",Toast.LENGTH_SHORT).show();
                 Log.i("xyz", "InfoAvailable is on");
                 info = minfo;
+                // btnRequest.setVisibility(View.VISIBLE);
             }
         };
 
@@ -168,15 +173,23 @@ public class WifiDirectSend extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(getApplicationContext(),"Send button clicked.",Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getApplicationContext(),"Send button clicked.",Toast.LENGTH_SHORT).show();
                 discoverPeers();
                 // sendMessage();
                // btRefresh.setVisibility(View.INVISIBLE);
             }
         });
 
+        btnRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendMessage();
+                btnRequest.setVisibility(View.INVISIBLE);
+            }
+        });
 
-        mAdapter.SetOnItemClickListener(new WifiAdapter.OnItemClickListener() {
+
+       /* mAdapter.SetOnItemClickListener(new WifiAdapter.OnItemClickListener() {
 
             @Override
             public void OnItemClick(View view, int position) {
@@ -188,12 +201,16 @@ public class WifiDirectSend extends AppCompatActivity {
             public void OnItemLongClick(View view, int position) {
 
             }
-        });
+        });*/
     }
 
     private void sendMessage() {
 
         try {
+
+            if(null == info){
+                return;
+            }
 
             Intent serviceIntent = new Intent(WifiDirectSend.this, DataTransferService.class);
             serviceIntent.setAction(DataTransferService.ACTION_SEND_DATA);
@@ -227,9 +244,10 @@ public class WifiDirectSend extends AppCompatActivity {
 
             @Override
             public void onSuccess() {
+                // btnRequest.setVisibility(View.VISIBLE);
                 sendMessage();
                 // btSend.setVisibility(View.VISIBLE);
-                Toast.makeText(getApplicationContext(),"WifiP2pManager connect success.", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getApplicationContext(),"WifiP2pManager connect success.", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -237,6 +255,8 @@ public class WifiDirectSend extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"WifiP2pManager connect failure. Reason: " + reason, Toast.LENGTH_SHORT).show();
             }
         });
+
+
     }
 
     private void initWifiP2pConfig(String address) {
@@ -265,11 +285,18 @@ public class WifiDirectSend extends AppCompatActivity {
 
             @Override
             public void onSuccess() {
-                Toast.makeText(getApplicationContext(),"WifiP2pManager discoverPeers success.", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getApplicationContext(),"WifiP2pManager discoverPeers success.", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(int reason) {
+
+                if(2 == reason) {
+
+                    Toast.makeText(getApplicationContext(),"Enabling wifi.", Toast.LENGTH_SHORT).show();
+                    WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+                    wifiManager.setWifiEnabled(true);
+                }
                 Toast.makeText(getApplicationContext(),"WifiP2pManager discoverPeers failure. Reason: " + reason, Toast.LENGTH_SHORT).show();
             }
         });

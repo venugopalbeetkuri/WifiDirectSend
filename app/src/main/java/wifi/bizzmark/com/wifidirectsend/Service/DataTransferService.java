@@ -4,7 +4,9 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -72,8 +74,19 @@ public class DataTransferService extends IntentService {
 
                 String message = intent.getExtras().getString(MESSAGE);
 
-                showToast("Writing message: " + message);
+                // showToast("Writing message: " + message);
                 stream.write(message.getBytes());
+
+               /* BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                while(true) {
+
+                    String line = bufferedReader.readLine();
+                    if(line!= null) {
+
+                        showToast("Message from seller: " + line);
+                    }
+                }*/
+
 
             } catch (IOException e) {
                 Log.e("bizzmark", e.getMessage());
